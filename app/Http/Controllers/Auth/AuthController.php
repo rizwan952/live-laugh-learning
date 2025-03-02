@@ -24,7 +24,7 @@ class AuthController extends Controller
                 throw new Exception('The provided credentials are incorrect.');
             }
             $token = $user->createToken($request->email)->plainTextToken;
-            return $this->apiResponse(true, 'Login successfully', ['accessToken' => $token]);
+            return $this->apiResponse(true, 'Login successfully', ['accessToken' => $token, "role" => $user->role]);
         } catch (Exception $e) {
             $statusCode = 400;
             if ($e->getCode() > 0 && $e->getCode() < 600) {
