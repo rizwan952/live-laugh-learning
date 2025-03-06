@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Traits\ApiResponseHelper;
 use Illuminate\Http\Request;
@@ -43,6 +44,20 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password),
             ]);
             return $this->apiResponse(true, 'User registered successfully');
+        } catch (Exception $e) {
+            $statusCode = 400;
+            if ($e->getCode() > 0 && $e->getCode() < 600) {
+                $statusCode = $e->getCode();
+            }
+            return $this->apiResponse(false, $e->getMessage(), [], $statusCode);
+        }
+    }
+
+    public function getProfile(Request $request)
+    {
+        try {
+            $data = new UserResource(User::find($request->user()->id));
+            return $this->apiResponse(true, 'Data fetched successfully', $data);
         } catch (Exception $e) {
             $statusCode = 400;
             if ($e->getCode() > 0 && $e->getCode() < 600) {

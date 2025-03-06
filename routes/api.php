@@ -7,6 +7,10 @@ use App\Http\Controllers\Auth\AuthController;
 Route::post('login',[AuthController::class, 'login']);
 Route::post('register',[AuthController::class, 'register']);
 
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::get('get-profile', [AuthController::class, 'getProfile']);
+    // Additional admin routes
+});
 
 //Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 //    Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
