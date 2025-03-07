@@ -13,11 +13,13 @@ class TagSeeder extends Seeder
     public function run(): void
     {
         $tags = [
-            ['name' => 'Technology'],
-            ['name' => 'Health'],
-            ['name' => 'Education'],
-            ['name' => 'Sports'],
-            ['name' => 'Entertainment'],
+            ['name' => 'Pronunciation'],
+            ['name' => 'Grammar'],
+            ['name' => 'Spelling'],
+            ['name' => 'Reading'],
+            ['name' => 'Listening'],
+            ['name' => 'Writing'],
+            ['name' => 'Speaking'],
         ];
         $tags = array_map(fn($level) => array_merge($level, [
             'created_at' => now(),
