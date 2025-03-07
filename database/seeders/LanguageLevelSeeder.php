@@ -13,13 +13,12 @@ class LanguageLevelSeeder extends Seeder
     public function run(): void
     {
         $languageLevels = [
-            ['name' => 'Beginner', 'description' => 'Basic understanding of the language.'],
-            ['name' => 'Elementary', 'description' => 'Able to communicate in simple terms.'],
-            ['name' => 'Pre-Intermediate', 'description' => 'Can handle common daily conversations.'],
-            ['name' => 'Intermediate', 'description' => 'Capable of engaging in normal conversations.'],
-            ['name' => 'Upper-Intermediate', 'description' => 'Fluent but not yet perfect.'],
-            ['name' => 'Advanced', 'description' => 'Speaks and understands with high proficiency.'],
-            ['name' => 'Proficient', 'description' => 'Near-native level of fluency.']
+            ['name' => 'A1: Beginner', 'description' => 'I just started learning or I can introduce myself and ask simple questions.'],
+            ['name' => 'A2: Elementary', 'description' => 'I can describe things in simple terms and understand simple expressions.'],
+            ['name' => 'B1: Intermediate', 'description' => 'I can use my language skills when traveling and talk about my hobbies, work, and family.'],
+            ['name' => 'B2: Upper Intermediate', 'description' => 'I can understand the main ideas of a complicated topic and have no trouble talking to native speakers.'],
+            ['name' => 'C1: Advanced', 'description' => 'I can use my language skills in social, academic, or professional situations and keep up with complex conversations.'],
+            ['name' => 'C2: Proficient', 'description' => 'I can understand almost everything I hear or read and express myself well when talking about complex topics.'],
         ];
         // Add timestamps dynamically
         $languageLevels = array_map(fn($level) => array_merge($level, [
