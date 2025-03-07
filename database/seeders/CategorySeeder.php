@@ -13,11 +13,13 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            ['name' => 'Technology',"status" => false],
-            ['name' => 'Health'],
-            ['name' => 'Education'],
-            ['name' => 'Sports'],
-            ['name' => 'Entertainment'],
+            ['name' => 'Language Essentials'],
+            ['name' => 'Business',"status" => false],
+            ['name' => 'Test Preparation',"status" => false],
+            ['name' => 'Kids',"status" => false],
+            ['name' => 'Conversation'],
+            ['name' => 'Medical',"status" => false],
+            ['name' => 'Technology',"status" => false]
         ];
         $categories = array_map(fn($level) => array_merge($level, [
             'created_at' => now(),
