@@ -13,11 +13,11 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            ['name' => 'Language Essentials'],
+            ['name' => 'Language Essentials',"status" => true],
             ['name' => 'Business',"status" => false],
             ['name' => 'Test Preparation',"status" => false],
             ['name' => 'Kids',"status" => false],
-            ['name' => 'Conversation'],
+            ['name' => 'Conversation',"status" => true],
             ['name' => 'Medical',"status" => false],
             ['name' => 'Technology',"status" => false]
         ];
