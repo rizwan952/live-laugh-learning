@@ -13,7 +13,7 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            ['name' => 'Technology'],
+            ['name' => 'Technology',"status" => false],
             ['name' => 'Health'],
             ['name' => 'Education'],
             ['name' => 'Sports'],
