@@ -18,8 +18,9 @@ class DatabaseSeeder extends Seeder
             LanguageLevelSeeder::class,
             TagSeeder::class,
             CourseSeeder::class,
-            CoursePriceSeeder::class,
-            CourseTagSeeder::class
+            CourseTagSeeder::class,
+            CourseDurationSeeder::class,
+            CoursePackageSeeder::class
         ]);
     }
 }

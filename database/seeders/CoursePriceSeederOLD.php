@@ -6,7 +6,7 @@ use App\Models\Course;
 use App\Models\CoursePrice;
 use Illuminate\Database\Seeder;
 
-class CoursePriceSeeder extends Seeder
+class CoursePriceSeederOLD extends Seeder
 {
     /**
      * Run the database seeds.
