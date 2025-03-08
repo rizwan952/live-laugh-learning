@@ -2,16 +2,20 @@
 
 namespace App\Http\Requests;
 
+use App\Traits\ApiResponseHelper;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class CourseRequest extends FormRequest
 {
+    use ApiResponseHelper;
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +26,31 @@ class CourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'categoryId' => 'required|exists:categories,id',
+            'languageId' => 'required|exists:languages,id',
+            'languageLevelFromId' => 'required|exists:language_levels,id',
+            'languageLevelToId' => 'required|exists:language_levels,id',
+            'name' => 'required|string|max:255',
+            'status' => 'required|boolean',
+            'description' => 'nullable|string',
+            "tags" => "required|array",
+            "tags.*" => "exists:tags,id",
+            "durations" => "required|array",
+            "durations.*.duration" => "required|integer|min:1",
+            "durations.*.packages" => "required|array",
+            "durations.*.packages.*.type" => "required|string",
+            "durations.*.packages.*.price" => "required|numeric|min:0"
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        $response = $this->apiResponse(
+            false,
+            $validator->errors()->first(),
+            $validator->errors()->toArray(),
+            400
+        );
+        throw new HttpResponseException($response);
     }
 }

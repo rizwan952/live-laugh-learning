@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Web\CourseController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 
 
 Route::post('login', [AuthController::class, 'login']);
@@ -16,6 +17,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('get-resources', [DashboardController::class, 'getResources']);
+
+    Route::post('create-course', [AdminCourseController::class, 'createCourse']);
 });
 
 

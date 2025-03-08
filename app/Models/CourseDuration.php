@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CourseDuration extends Model
 {
+    protected $guarded = ['id'];
     public function packages()
     {
         return $this->hasMany(CoursePackage::class);
