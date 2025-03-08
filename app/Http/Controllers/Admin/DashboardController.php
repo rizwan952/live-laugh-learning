@@ -3,63 +3,40 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Resources\Admin\DashboardResource;
+use App\Models\Category;
+use App\Models\Language;
+use App\Models\LanguageLevel;
+use App\Models\Tag;
+use App\Traits\ApiResponseHelper;
+use Exception;
 
 class DashboardController extends Controller
 {
+    use ApiResponseHelper;
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function getResources()
     {
-        //
+        try {
+            $resources =  [
+                'languages' => Language::all(),
+                'languageLevels' => LanguageLevel::all(),
+                'categories' => Category::all(),
+                'tags' => Tag::all()
+            ];
+
+            $data = new DashboardResource($resources);
+            return $this->apiResponse(true, 'Data fetched successfully', $data);
+        } catch (Exception $e) {
+            $statusCode = 400;
+            if ($e->getCode() > 0 && $e->getCode() < 600) {
+                $statusCode = $e->getCode();
+            }
+            return $this->apiResponse(false, $e->getMessage(), [], $statusCode);
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }
