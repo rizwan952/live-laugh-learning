@@ -18,7 +18,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('get-resources', [DashboardController::class, 'getResources']);
 
-    Route::post('create-course', [AdminCourseController::class, 'createCourse']);
+    Route::post('course/create', [AdminCourseController::class, 'createCourse']);
+    Route::put('course/update/{course}', [AdminCourseController::class, 'updateCourse']);
 });
 
 
