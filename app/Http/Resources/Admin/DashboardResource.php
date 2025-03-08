@@ -16,7 +16,7 @@ class DashboardResource extends JsonResource
     {
         return [
             'languages' => LanguageResource::collection($this->resource['languages']),
-            'language_levels' => LanguageLevelResource::collection($this->resource['languageLevels']),
+            'languageLevels' => LanguageLevelResource::collection($this->resource['languageLevels']),
             'categories' => CategoryResource::collection($this->resource['categories']),
             'tags' => TagResource::collection($this->resource['tags'])
         ];
