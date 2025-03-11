@@ -87,14 +87,17 @@ class OrderService
             return response()->json(['error' => 'Invalid signature'], 400);
         }
 
+        $paymentIntent = $event->data->object;
+        $paymentStatus = 'processing';
         if ($event->type === 'payment_intent.succeeded') {
-            $paymentIntent = $event->data->object;
-
-            // Update payment status in database
-            Order::where('payment_id', $paymentIntent->id)
-                ->update(['payment_status' => 'completed', 'payment_details' => json_encode($paymentIntent)]);
+           $paymentStatus = 'completed';
+        }elseif ($event->type === 'payment_intent.payment_failed' || $event->type === 'payment_intent.canceled') {
+            $paymentStatus = 'failed';
         }
-        Log::info('Webhook Handled => payment status updated for '.$paymentIntent->id);
+        // Update payment status in database
+        Order::where('payment_id', $paymentIntent->id)->update(['payment_status' => $paymentStatus, 'payment_details' => json_encode($paymentIntent)]);
+        Log::info('Webhook Handled  payment event for '.$paymentIntent->id);
+        Log::info('Webhook Handled Event Type '.$event->type);
         return response()->json(['message' => 'Webhook received'], 200);
     }
 }
