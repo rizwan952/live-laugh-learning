@@ -11,4 +11,8 @@ class CourseDuration extends Model
     {
         return $this->hasMany(CoursePackage::class);
     }
+
+    public function course(){
+        return $this->belongsTo(Course::class);
+    }
 }

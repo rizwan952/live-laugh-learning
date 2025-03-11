@@ -28,6 +28,9 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
 
 // Student routs
 Route::prefix('student')->middleware(['auth:sanctum', 'role:student'])->group(function () {
+    Route::get('course/orders', [OrderController::class, 'getOrders']);
     Route::post('course/order', [OrderController::class, 'order']);
 });
 
+//Stripe WEBHOOK
+Route::post('stripe/webhook', [OrderController::class, 'handleWebhook']);

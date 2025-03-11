@@ -6,5 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    //
+    protected $guarded = ['id'];
+
+    public function package()
+    {
+        return $this->hasOne(OrderPackage::class);
+    }
+
+    public function student()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

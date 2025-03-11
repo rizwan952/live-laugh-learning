@@ -10,7 +10,7 @@ class CoursePackage extends Model
 
     public function duration()
     {
-        return $this->belongsTo(CourseDuration::class);
+        return $this->belongsTo(CourseDuration::class,'course_duration_id');
     }
 
 }

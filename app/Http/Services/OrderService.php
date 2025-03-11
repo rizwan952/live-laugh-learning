@@ -2,23 +2,34 @@
 
 namespace App\Http\Services;
 
+use App\Http\Resources\OrderResource;
 use App\Models\CoursePackage;
 use App\Models\Order;
 use App\Models\OrderPackage;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Stripe\Exception\SignatureVerificationException;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
+use Stripe\Webhook;
 
 class OrderService
 {
+
+    public function getOrders()
+    {
+        $orders = Order::all();
+        return OrderResource::collection($orders);
+    }
 
     public function createOrder(Request $request)
     {
         try {
             DB::beginTransaction();
             $package = CoursePackage::find($request->package_id);
+
             $order = Order::create([
                 'student_id' => $request->user()->id,
                 'course_id' => $package->duration->course_id,
@@ -42,12 +53,14 @@ class OrderService
                 'currency' => 'usd',
                 'payment_method_types' => ['card'],
             ]);
-            DB::commit();
+
             $order->update([
                 'payment_method' => 'stripe',
                 'payment_id' => $paymentIntent->id,
                 'payment_details' => json_encode($paymentIntent)
             ]);
+
+            DB::commit();
 
             return $paymentIntent->client_secret;
         } catch (Exception $e) {
@@ -56,5 +69,32 @@ class OrderService
         }
     }
 
+    public function handleWebhook(Request $request)
+    {
+        Log::info('Inside handleWebhook');
+        Stripe::setApiKey(config('services.stripe.secret'));
+        $payload = $request->getContent();
+        $sig_header = $request->header('Stripe-Signature');
+        $endpoint_secret = config('services.stripe.webhook_secret'); // Set this in .env
 
+        try {
+            $event = Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
+        } catch (\UnexpectedValueException $e) {
+            Log::error('Inside handleWebhook error: ' . $e->getMessage());
+            return response()->json(['error' => 'Invalid payload'], 400);
+        } catch (SignatureVerificationException $e) {
+            Log::error('Inside handleWebhook error: ' . $e->getMessage());
+            return response()->json(['error' => 'Invalid signature'], 400);
+        }
+
+        if ($event->type === 'payment_intent.succeeded') {
+            $paymentIntent = $event->data->object;
+
+            // Update payment status in database
+            Order::where('payment_id', $paymentIntent->id)
+                ->update(['payment_status' => 'completed', 'payment_details' => json_encode($paymentIntent)]);
+        }
+        Log::info('Webhook Handled => payment status updated for '.$paymentIntent->id);
+        return response()->json(['message' => 'Webhook received'], 200);
+    }
 }

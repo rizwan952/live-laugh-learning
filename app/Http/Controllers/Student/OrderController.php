@@ -5,9 +5,10 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderRequest;
 use App\Http\Services\OrderService;
-use App\Models\CoursePackage;
 use App\Traits\ApiResponseHelper;
 use Exception;
+use Illuminate\Http\Request;
+
 class OrderController extends Controller
 {
     use ApiResponseHelper;
@@ -18,12 +19,13 @@ class OrderController extends Controller
     {
         $this->orderService = $orderService;
     }
-    public function order(OrderRequest $request)
+
+    public function getOrders()
     {
         try {
-            $this->orderService->createOrder($request);
+            $data = $this->orderService->getOrders();
 
-            return $this->apiResponse(true, 'Order Created successfully');
+            return $this->apiResponse(true, 'Order Created successfully', $data);
         } catch (Exception $e) {
             $statusCode = 400;
             if ($e->getCode() > 0 && $e->getCode() < 600) {
@@ -31,6 +33,26 @@ class OrderController extends Controller
             }
             return $this->apiResponse(false, $e->getMessage(), [], $statusCode);
         }
+    }
+
+    public function order(OrderRequest $request)
+    {
+        try {
+            $data = $this->orderService->createOrder($request);
+
+            return $this->apiResponse(true, 'Order Created successfully', ['payment_intent' => $data]);
+        } catch (Exception $e) {
+            $statusCode = 400;
+            if ($e->getCode() > 0 && $e->getCode() < 600) {
+                $statusCode = $e->getCode();
+            }
+            return $this->apiResponse(false, $e->getMessage(), [], $statusCode);
+        }
+    }
+
+    public function handleWebhook(Request $request)
+    {
+        return $this->orderService->handleWebhook($request);
     }
 
 
