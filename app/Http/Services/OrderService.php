@@ -44,9 +44,9 @@ class OrderService
             ]);
             DB::commit();
             $order->update([
-                'payment_method'=>'stripe',
+                'payment_method' => 'stripe',
                 'payment_id' => $paymentIntent->id,
-                'payment_details'=>json_encode($paymentIntent)
+                'payment_details' => json_encode($paymentIntent)
             ]);
 
             return $paymentIntent->client_secret;
