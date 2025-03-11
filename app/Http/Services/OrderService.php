@@ -8,6 +8,8 @@ use App\Models\OrderPackage;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Stripe\Stripe;
+use Stripe\PaymentIntent;
 
 class OrderService
 {
@@ -32,7 +34,22 @@ class OrderService
                 'type' => $package->type,
                 'price' => $package->price,
             ]);
+
+            Stripe::setApiKey(config('services.stripe.secret'));
+
+            $paymentIntent = PaymentIntent::create([
+                'amount' => $order->final_amount * 100, // Convert to cents
+                'currency' => 'usd',
+                'payment_method_types' => ['card'],
+            ]);
             DB::commit();
+            $order->update([
+                'payment_method'=>'stripe',
+                'payment_id' => $paymentIntent->id,
+                'payment_details'=>json_encode($paymentIntent)
+            ]);
+
+            return $paymentIntent->client_secret;
         } catch (Exception $e) {
             DB::rollBack();
             throw new Exception($e->getMessage(), $e->getCode());
