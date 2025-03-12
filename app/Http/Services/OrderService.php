@@ -28,7 +28,7 @@ class OrderService
     {
         try {
             DB::beginTransaction();
-            $package = CoursePackage::find($request->package_id);
+            $package = CoursePackage::find($request->packageId);
 
             $order = Order::create([
                 'student_id' => $request->user()->id,

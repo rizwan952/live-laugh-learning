@@ -7,7 +7,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class OrderRequest extends FormRequest
+class ReviewRequest extends FormRequest
 {
     use ApiResponseHelper;
     /**
@@ -26,7 +26,9 @@ class OrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'packageId' => 'required|exists:course_packages,id',
+            'orderId' => 'required|exists:orders,id',
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string',
         ];
     }
 
