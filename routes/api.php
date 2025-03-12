@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Student\OrderController;
 use App\Http\Controllers\Student\ReviewController;
+use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 
 
 //Web routs
@@ -24,6 +25,8 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
 
     Route::post('course/create', [AdminCourseController::class, 'createCourse']);
     Route::put('course/update/{course}', [AdminCourseController::class, 'updateCourse']);
+
+    Route::apiResource('reviews', AdminReviewController::class);
 });
 
 

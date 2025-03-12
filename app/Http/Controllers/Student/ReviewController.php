@@ -23,7 +23,7 @@ class ReviewController extends Controller
     {
         try {
             $data = $this->reviewService->getReviews();
-            return $this->apiResponse(true, 'Orders fetched successfully', $data);
+            return $this->apiResponse(true, 'Reviews fetched successfully', $data);
         } catch (Exception $e) {
             $statusCode = 400;
             if ($e->getCode() > 0 && $e->getCode() < 600) {
