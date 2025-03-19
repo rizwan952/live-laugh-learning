@@ -23,10 +23,10 @@ class ReviewService
         try {
             DB::beginTransaction();
             $order = Order::find(['student_id' => $request->user()->id, $request->orderId])->first();
-            if ($order) {
+            if (!$order) {
                 throw new Exception('Order is not valid');
             }
-            $checkReview = Review::where(['student_id' => $request->user()->id, 'order_id' => $order->id,])->first();
+            $checkReview = Review::where(['student_id' => $request->user()->id, 'order_id' => $request->orderId,])->first();
             if ($checkReview) {
                 throw new Exception('Review already exist');
             }
