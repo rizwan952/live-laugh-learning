@@ -18,9 +18,9 @@ use Stripe\Webhook;
 class OrderService
 {
 
-    public function getOrders()
+    public function getOrders(Request $request)
     {
-        $orders = Order::all();
+        $orders = Order::where('student_id', $request->user()->id)->get();
         return OrderResource::collection($orders);
     }
 

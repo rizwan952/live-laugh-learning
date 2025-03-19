@@ -73,7 +73,7 @@ class CourseService
                 $duration->packages()->delete(); // Delete related packages first
                 $duration->delete(); // Then delete the duration
             });
-            
+
             // Create durations and packages
             foreach ($request->durations as $durationData) {
                 $duration = CourseDuration::create([

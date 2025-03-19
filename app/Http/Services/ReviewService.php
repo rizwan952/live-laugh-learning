@@ -14,7 +14,7 @@ class ReviewService
 
     public function getReviews()
     {
-        $reviews= Review::all();
+        $reviews = Review::all();
         return ReviewResource::collection($reviews);
     }
 
@@ -22,8 +22,10 @@ class ReviewService
     {
         try {
             DB::beginTransaction();
-            $order = Order::find($request->orderId);
-
+            $order = Order::find(['student_id' => $request->user()->id, $request->orderId])->first();
+            if ($order) {
+                throw new Exception('Order is not valid');
+            }
             $checkReview = Review::where(['student_id' => $request->user()->id, 'order_id' => $order->id,])->first();
             if ($checkReview) {
                 throw new Exception('Review already exist');

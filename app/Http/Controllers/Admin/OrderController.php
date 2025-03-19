@@ -3,28 +3,45 @@
 namespace App\Http\Controllers\Admin;
 
 use  App\Http\Controllers\Controller;
-use App\Http\Requests\AdminReviewRequest;
-use App\Http\Services\Admin\ReviewService;
-use App\Models\Review;
+use App\Http\Requests\AdminOrderRequest;
+use App\Http\Services\Admin\OrderService;
+use App\Models\Order;
 use App\Traits\ApiResponseHelper;
 use Exception;
+use Illuminate\Http\Request;
 
-class ReviewController extends Controller
+class OrderController extends Controller
 {
     use ApiResponseHelper;
 
-    protected $reviewService;
+    protected $orderService;
 
-    public function __construct(ReviewService $reviewService)
+    public function __construct(OrderService $orderService)
     {
-        $this->reviewService = $reviewService;
+        $this->orderService = $orderService;
     }
 
-    public function index()
+    public function getOrders()
     {
         try {
-            $data = $this->reviewService->getReviews();
-            return $this->apiResponse(true, 'Reviews fetched successfully', $data);
+            $data = $this->orderService->getOrders();
+
+            return $this->apiResponse(true, 'Orders fetch successfully', $data);
+        } catch (Exception $e) {
+            $statusCode = 400;
+            if ($e->getCode() > 0 && $e->getCode() < 600) {
+                $statusCode = $e->getCode();
+            }
+            return $this->apiResponse(false, $e->getMessage(), [], $statusCode);
+        }
+
+    }
+
+    public function updateOrder(AdminOrderRequest $request, Order $order)
+    {
+        try {
+            $this->orderService->updateOrder($request, $order);
+            return $this->apiResponse(true, 'Order updated successfully');
         } catch (Exception $e) {
             $statusCode = 400;
             if ($e->getCode() > 0 && $e->getCode() < 600) {
@@ -33,20 +50,4 @@ class ReviewController extends Controller
             return $this->apiResponse(false, $e->getMessage(), [], $statusCode);
         }
     }
-
-    public function update(AdminReviewRequest $request, Review $review)
-    {
-        try {
-            $this->reviewService->updateReview($request, $review);
-            return $this->apiResponse(true, 'Review updated successfully');
-        } catch (Exception $e) {
-            $statusCode = 400;
-            if ($e->getCode() > 0 && $e->getCode() < 600) {
-                $statusCode = $e->getCode();
-            }
-            return $this->apiResponse(false, $e->getMessage(), [], $statusCode);
-        }
-    }
-
-
 }

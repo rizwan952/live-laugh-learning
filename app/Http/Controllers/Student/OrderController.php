@@ -20,12 +20,11 @@ class OrderController extends Controller
         $this->orderService = $orderService;
     }
 
-    public function getOrders()
+    public function getOrders(Request $request)
     {
         try {
-            $data = $this->orderService->getOrders();
-
-            return $this->apiResponse(true, 'Order Created successfully', $data);
+            $data = $this->orderService->getOrders($request);
+            return $this->apiResponse(true, 'Order fetched successfully', $data);
         } catch (Exception $e) {
             $statusCode = 400;
             if ($e->getCode() > 0 && $e->getCode() < 600) {
@@ -39,7 +38,6 @@ class OrderController extends Controller
     {
         try {
             $data = $this->orderService->createOrder($request);
-
             return $this->apiResponse(true, 'Order Created successfully', ['payment_intent' => $data]);
         } catch (Exception $e) {
             $statusCode = 400;

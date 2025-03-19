@@ -8,23 +8,28 @@ use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Student\OrderController;
 use App\Http\Controllers\Student\ReviewController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
 
 //Web routs
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
-Route::get('get-courses', [CourseController::class, 'getCourses']);
+Route::get('courses', [CourseController::class, 'getCourses']);
+Route::get('reviews', [CourseController::class, 'getReviews']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('get-profile', [AuthController::class, 'getProfile']);
+    Route::get('profile', [AuthController::class, 'getProfile']);
 });
 
 // Admin routs
 Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
-    Route::get('get-resources', [DashboardController::class, 'getResources']);
+    Route::get('resources', [DashboardController::class, 'getResources']);
 
-    Route::post('course/create', [AdminCourseController::class, 'createCourse']);
+    Route::post('course', [AdminCourseController::class, 'createCourse']);
     Route::put('course/update/{course}', [AdminCourseController::class, 'updateCourse']);
+
+    Route::get('orders', [AdminOrderController::class, 'getOrders']);
+    Route::put('order/{order}', [AdminOrderController::class, 'updateOrder']);
 
     Route::apiResource('reviews', AdminReviewController::class);
 });
@@ -32,8 +37,8 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
 
 // Student routs
 Route::prefix('student')->middleware(['auth:sanctum', 'role:student'])->group(function () {
-    Route::get('course/orders', [OrderController::class, 'getOrders']);
-    Route::post('course/order', [OrderController::class, 'order']);
+    Route::get('orders', [OrderController::class, 'getOrders']);
+    Route::post('order', [OrderController::class, 'order']);
     Route::apiResource('reviews', ReviewController::class);
 });
 
