@@ -23,7 +23,7 @@ class OrderResource extends JsonResource
             'status' => $this->status,
             'paymentMethod' => $this->payment_method,
             'paymentStatus' => $this->payment_status,
-            'created_at' => $this->created_at->toDateTimeString(),
+            'createdAt' => $this->created_at->toDateTimeString(),
             'package' => new OrderPackageResource($this->package),
             'student' => new UserResource($this->student)
         ];

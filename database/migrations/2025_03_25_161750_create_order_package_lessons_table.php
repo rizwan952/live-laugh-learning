@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('order_packages', function (Blueprint $table) {
+        Schema::create('order_package_lessons', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained('orders');
-            $table->foreignId('duration_id')->constrained('course_durations');
-            $table->foreignId('package_id')->constrained('course_packages');
-            $table->integer('duration');
-            $table->string('type');
-            $table->integer('lesson_count');
-            $table->decimal('price', 8, 2);
+            $table->foreignId('order_package_id')->constrained('order_packages');
+            $table->string('status')->default('pending');
+            $table->timestamp('start_at')->nullable();
+            $table->timestamp('end_at')->nullable();
+            $table->string('time_zone')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('order_packages');
+        Schema::dropIfExists('order_package_lessons');
     }
 };

@@ -39,7 +39,8 @@ class CourseRequest extends FormRequest
             "durations.*.duration" => "required|integer|min:1",
             "durations.*.packages" => "required|array",
             "durations.*.packages.*.type" => "required|string",
-            "durations.*.packages.*.price" => "required|numeric|min:0"
+            "durations.*.packages.*.price" => "required|numeric|min:0",
+            "durations.*.packages.*.lessonCount" => "required|numeric|min:1",
         ];
     }
 

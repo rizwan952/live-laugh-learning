@@ -19,7 +19,9 @@ class OrderPackageResource extends JsonResource
             'packageId' => $this->package_id,
             'duration' => $this->duration,
             'type' => $this->type,
-            'price' => $this->price
+            'price' => $this->price,
+            'lessonCount' => $this->lesson_count,
+            'packageLessons' => OrderPackageLessonResource::collection($this->orderPackageLessons)
         ];
     }
 }

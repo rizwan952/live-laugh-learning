@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('course_duration_id')->constrained('course_durations');
             $table->string('type');
+            $table->integer('lesson_count');
             $table->decimal('price', 8, 2);
             $table->timestamps();
         });

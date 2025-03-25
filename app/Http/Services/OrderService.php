@@ -6,6 +6,7 @@ use App\Http\Resources\OrderResource;
 use App\Models\CoursePackage;
 use App\Models\Order;
 use App\Models\OrderPackage;
+use App\Models\OrderPackageLesson;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,14 +38,29 @@ class OrderService
                 'course_price' => $package->price,
                 'final_amount' => $package->price
             ]);
-            OrderPackage::create([
+            $orderPackage = OrderPackage::create([
                 'order_id' => $order->id,
                 'duration_id' => $package->duration->id,
                 'package_id' => $package->id,
                 'duration' => $package->duration->duration,
                 'type' => $package->type,
                 'price' => $package->price,
+                'lesson_count' => $package->lesson_count
             ]);
+
+            // Prepare data for bulk insert
+            $lessonData = [];
+            for ($i = 0; $i < $package->lesson_count; $i++) {
+                $lessonData[] = [
+                    'order_id' => $order->id,
+                    'order_package_id' => $orderPackage->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            // Bulk insert into OrderPackageLesson table
+            OrderPackageLesson::insert($lessonData);
 
             Stripe::setApiKey(config('services.stripe.secret'));
 
@@ -90,14 +106,14 @@ class OrderService
         $paymentIntent = $event->data->object;
         $paymentStatus = 'processing';
         if ($event->type === 'payment_intent.succeeded') {
-           $paymentStatus = 'completed';
-        }elseif ($event->type === 'payment_intent.payment_failed' || $event->type === 'payment_intent.canceled') {
+            $paymentStatus = 'completed';
+        } elseif ($event->type === 'payment_intent.payment_failed' || $event->type === 'payment_intent.canceled') {
             $paymentStatus = 'failed';
         }
         // Update payment status in database
         Order::where('payment_id', $paymentIntent->id)->update(['payment_status' => $paymentStatus, 'payment_details' => json_encode($paymentIntent)]);
-        Log::info('Webhook Handled  payment event for '.$paymentIntent->id);
-        Log::info('Webhook Handled Event Type '.$event->type);
+        Log::info('Webhook Handled  payment event for ' . $paymentIntent->id);
+        Log::info('Webhook Handled Event Type ' . $event->type);
         return response()->json(['message' => 'Webhook received'], 200);
     }
 }

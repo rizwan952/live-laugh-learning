@@ -39,6 +39,7 @@ class CourseService
                     CoursePackage::create([
                         "course_duration_id" => $duration->id,
                         "type" => $packageData["type"],
+                        "lesson_count"=>$packageData['lessonCount'],
                         "price" => $packageData["price"],
                     ]);
                 }
@@ -85,6 +86,7 @@ class CourseService
                     CoursePackage::create([
                         "course_duration_id" => $duration->id,
                         "type" => $packageData["type"],
+                        "lesson_count"=>$packageData['lessonCount'],
                         "price" => $packageData["price"],
                     ]);
                 }
