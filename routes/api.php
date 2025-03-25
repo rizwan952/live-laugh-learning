@@ -39,6 +39,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
 Route::prefix('student')->middleware(['auth:sanctum', 'role:student'])->group(function () {
     Route::get('orders', [OrderController::class, 'getOrders']);
     Route::post('order', [OrderController::class, 'order']);
+    Route::put('order/{order}/package-lessons', [OrderController::class, 'updateOrderLessons']);
     Route::apiResource('reviews', ReviewController::class);
 });
 

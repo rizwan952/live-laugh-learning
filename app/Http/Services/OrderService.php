@@ -21,7 +21,14 @@ class OrderService
 
     public function getOrders(Request $request)
     {
-        $orders = Order::where('student_id', $request->user()->id)->get();
+        $query = Order::where('student_id', $request->user()->id);
+
+        // Check if order_id is provided and filter accordingly
+        if ($request->has('orderId')) {
+            $query->where('id', $request->orderId);
+        }
+
+        $orders = $query->get();
         return OrderResource::collection($orders);
     }
 
@@ -78,7 +85,43 @@ class OrderService
 
             DB::commit();
 
-            return $paymentIntent->client_secret;
+            return [
+                'orderId' => $order->id,
+                'paymentIntent' => $paymentIntent->client_secret
+            ];
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function updateOrderLessons(Request $request, Order $order)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Get the packageLessons data from the request
+              $packageLessons = $request->packageLessons;
+            // Update each lesson
+            foreach ($packageLessons as $lessonData) {
+                $lesson = OrderPackageLesson::where('id', $lessonData['id'])
+                    ->where('order_id', $order->id) // Ensure the lesson belongs to this order
+                    ->first();
+
+                if (!$lesson) {
+                    throw new Exception("Lesson with ID {$lessonData['id']} not found or does not belong to this order");
+                }
+
+                // Update the lesson with only the provided fields
+                $lesson->update([
+                    'start_at' => $lessonData['startAt'],
+                    'end_at' => $lessonData['endAt'],
+                    'time_zone' => $lessonData['timeZone'],
+                    'status' => 'processing'
+                ]);
+            }
+
+            DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             throw new Exception($e->getMessage(), $e->getCode());
