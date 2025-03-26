@@ -7,4 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class OrderPackageLesson extends Model
 {
     protected $guarded = ['id'];
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }

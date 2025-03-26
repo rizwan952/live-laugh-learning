@@ -5,6 +5,7 @@ namespace App\Http\Services\Admin;
 
 use App\Http\Resources\Admin\AdminCalendarResource;
 use App\Models\Calendar;
+use App\Models\OrderPackageLesson;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,7 +36,28 @@ class CalendarService
 
         // Get the filtered results
         $calendars = $query->get();
-        return AdminCalendarResource::collection($calendars);
+
+        // Fetch matching order_package_lessons manually
+        $calendarDates = $calendars->pluck('date')->toArray();
+        $bookedSlots = OrderPackageLesson::whereIn(DB::raw('DATE(start_at)'), $calendarDates)
+            ->with('order.student')
+            ->where('status', 'processing')
+            ->whereNotNull('start_at')
+            ->get();
+        $slotsByDate = $bookedSlots->groupBy(function ($slot) {
+            return date('Y-m-d', strtotime($slot->start_at));
+        });
+
+        $calendarData = $calendars->map(function ($calendar) use ($slotsByDate) {
+            // Convert $calendar->date to a string in 'Y-m-d' format
+            $dateKey = $calendar->date instanceof \Carbon\Carbon
+                ? $calendar->date->toDateString()
+                : (string) $calendar->date;
+            $calendar->bookedSlots = $slotsByDate->get($dateKey, collect())->values();
+            return $calendar;
+        });
+
+        return AdminCalendarResource::collection($calendarData);
     }
     public function createCalendar(Request $request)
     {

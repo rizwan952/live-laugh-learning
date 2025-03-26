@@ -2,11 +2,10 @@
 
 namespace App\Http\Resources\Admin;
 
-use App\Http\Resources\DurationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AdminCalendarResource extends JsonResource
+class AdminBookedSlotResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,12 +16,10 @@ class AdminCalendarResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'date' => $this->date->format('Y-m-d'),
+            'name' => $this->order->student->name,
+            'startAt' => $this->start_at,
+            'endAt' => $this->end_at,
             'timeZone' => $this->time_zone,
-            'createdAt' => $this->created_at->toDateTimeString(),
-            'timeSlots' => AdminTimeSlotResource::collection($this->timeSlots),
-            'bookedSlots' => AdminBookedSlotResource::collection($this->bookedSlots),
-
         ];
     }
 }
