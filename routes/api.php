@@ -4,11 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Web\CourseController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Student\OrderController;
 use App\Http\Controllers\Student\ReviewController;
+use App\Http\Controllers\Admin\CourseController as AdminCourseController;
+
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\CalendarController as AdminCalendarController;
 
 
 //Web routs
@@ -32,6 +34,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
     Route::put('order/{order}', [AdminOrderController::class, 'updateOrder']);
 
     Route::apiResource('reviews', AdminReviewController::class);
+    Route::apiResource('calendar', AdminCalendarController::class);
 });
 
 
