@@ -21,6 +21,7 @@ Route::get('reviews', [CourseController::class, 'getReviews']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('profile', [AuthController::class, 'getProfile']);
+    Route::get('get-calendar', [AdminCalendarController::class, 'index']);
 });
 
 // Admin routs
@@ -32,9 +33,9 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
 
     Route::get('orders', [AdminOrderController::class, 'getOrders']);
     Route::put('order/{order}', [AdminOrderController::class, 'updateOrder']);
-
-    Route::apiResource('reviews', AdminReviewController::class);
     Route::apiResource('calendar', AdminCalendarController::class);
+    Route::apiResource('reviews', AdminReviewController::class);
+
 });
 
 
