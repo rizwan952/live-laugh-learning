@@ -21,8 +21,8 @@ class UserResource extends JsonResource
             'role' => $this->role,
             'status' => $this->status,
             'emailVerifiedAt' => $this->email_verified_at,
-            'image' => $this->image,
-            'created_at' => $this->created_at->toDateTimeString(),
+            'image' => $this->image ? asset('storage/' . $this->image) : null,
+            'createdAt' => $this->created_at->toDateTimeString(),
         ];
     }
 }

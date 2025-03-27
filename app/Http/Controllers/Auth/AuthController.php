@@ -53,18 +53,6 @@ class AuthController extends Controller
         }
     }
 
-    public function getProfile(Request $request)
-    {
-        try {
-            $data = new UserResource(User::find($request->user()->id));
-            return $this->apiResponse(true, 'Data fetched successfully', $data);
-        } catch (Exception $e) {
-            $statusCode = 400;
-            if ($e->getCode() > 0 && $e->getCode() < 600) {
-                $statusCode = $e->getCode();
-            }
-            return $this->apiResponse(false, $e->getMessage(), [], $statusCode);
-        }
-    }
+
 
 }

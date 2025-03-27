@@ -3,63 +3,51 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProfileRequest;
+use App\Http\Resources\UserResource;
+use App\Http\Services\ProfileService;
+use App\Models\User;
+use App\Traits\ApiResponseHelper;
 use Illuminate\Http\Request;
-
+use Exception;
 class ProfileController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    use ApiResponseHelper;
+
+    protected $profileService;
+
+    public function __construct(ProfileService $profileService)
     {
-        //
+        $this->profileService = $profileService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+
+    public function getProfile(Request $request)
     {
-        //
+        try {
+            $data = $this->profileService->getProfile($request);
+            return $this->apiResponse(true, 'Data fetched successfully', $data);
+        } catch (Exception $e) {
+            $statusCode = 400;
+            if ($e->getCode() > 0 && $e->getCode() < 600) {
+                $statusCode = $e->getCode();
+            }
+            return $this->apiResponse(false, $e->getMessage(), [], $statusCode);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function updateProfile(ProfileRequest $request)
     {
-        //
+        try {
+            $this->profileService->updateProfile($request);
+            return $this->apiResponse(true, 'Data updated successfully');
+        } catch (Exception $e) {
+            $statusCode = 400;
+            if ($e->getCode() > 0 && $e->getCode() < 600) {
+                $statusCode = $e->getCode();
+            }
+            return $this->apiResponse(false, $e->getMessage(), [], $statusCode);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }
