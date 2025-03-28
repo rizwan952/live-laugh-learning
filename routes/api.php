@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Web\CourseController;
+use App\Http\Controllers\Web\ChatController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Student\OrderController;
 use App\Http\Controllers\Student\ReviewController;
@@ -25,6 +26,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('profile', [ProfileController::class, 'getProfile']);
     Route::post('update-profile', [ProfileController::class, 'updateProfile']);
     Route::get('get-calendar', [AdminCalendarController::class, 'index']);
+
+    #Future chat routs
+//    Route::post('chat/send', [ChatController::class, 'sendMessage']);
+//    Route::get('chat/conversation/{conversationId}', [ChatController::class, 'getConversation']);
+//    Route::get('chat/conversations', [ChatController::class, 'getConversations']);
+
 });
 
 // Admin routs
