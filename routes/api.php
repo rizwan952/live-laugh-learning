@@ -37,12 +37,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
 // Admin routs
 Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('resources', [DashboardController::class, 'getResources']);
+    Route::get('dashboard', [DashboardController::class, 'dashboard']);
 
     Route::post('course', [AdminCourseController::class, 'createCourse']);
     Route::put('course/update/{course}', [AdminCourseController::class, 'updateCourse']);
 
     Route::get('orders', [AdminOrderController::class, 'getOrders']);
     Route::put('order/{order}', [AdminOrderController::class, 'updateOrder']);
+    Route::put('order-lesson/{orderPackageLesson}', [AdminOrderController::class, 'updateOrderLesson']);
     Route::apiResource('calendar', AdminCalendarController::class);
     Route::apiResource('reviews', AdminReviewController::class);
     Route::apiResource('student', AdminStudentController::class);

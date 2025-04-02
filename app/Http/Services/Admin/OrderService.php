@@ -4,6 +4,7 @@ namespace App\Http\Services\Admin;
 
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
+use App\Models\OrderPackageLesson;
 use Illuminate\Http\Request;
 
 class OrderService
@@ -18,6 +19,13 @@ class OrderService
     public function updateOrder(Request $request, Order $order)
     {
         $order->update([
+            'status' => $request->status
+        ]);
+    }
+
+    public function updateOrderPackageLesson(Request $request, OrderPackageLesson $orderPackageLesson)
+    {
+        $orderPackageLesson->update([
             'status' => $request->status
         ]);
     }
