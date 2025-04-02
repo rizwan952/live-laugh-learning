@@ -32,7 +32,7 @@ class CourseController extends Controller
     public function getReviews()
     {
         try {
-            $reviews = Review::where('is_approved', true)->get();
+            $reviews = Review::where('is_approved', true)->with('student')->get();
             $data = ReviewResource::collection($reviews);
             return $this->apiResponse(true, 'Data fetched successfully', $data);
         } catch (Exception $e) {
