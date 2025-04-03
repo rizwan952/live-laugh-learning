@@ -20,7 +20,7 @@ class SalesReportResource extends JsonResource
             'dailySales' => $this['dailySales']->map(function ($course) {
                 return [
                     'date' => $course->date,
-                    'total_sales' => $course->total_sales,
+                    'totalSales' => $course->total_sales,
                 ];
             }),
             'courseSales' => $this['course_sales']->map(function ($course) {
