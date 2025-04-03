@@ -17,6 +17,12 @@ class SalesReportResource extends JsonResource
         return [
             'totalSales' => $this['total_sales'],
             'currentMonthSales' => $this['current_month_sales'],
+            'dailySales' => $this['dailySales']->map(function ($course) {
+                return [
+                    'date' => $course->date,
+                    'total_sales' => $course->total_sales,
+                ];
+            }),
             'courseSales' => $this['course_sales']->map(function ($course) {
                 return [
                     'courseId' => $course->course_id,

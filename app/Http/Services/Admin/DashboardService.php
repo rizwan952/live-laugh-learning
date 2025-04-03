@@ -25,10 +25,20 @@ class DashboardService
             ->orderByDesc('total_sales')
             ->get();
 
+        $dailySales = Order::select(
+            DB::raw('DATE(created_at) as date'),
+            DB::raw('SUM(final_amount) as total_sales')
+        )
+            ->where('payment_status', 'completed') // Considering only completed orders
+            ->groupBy('date')
+            ->orderBy('date', 'ASC')
+            ->get();
+
         $salesData = [
             'total_sales' => $totalSales,
             'current_month_sales' => $currentMonthSales,
-            'course_sales' => $courseSales
+            'course_sales' => $courseSales,
+            'dailySales'=>$dailySales
         ];
         return new SalesReportResource($salesData);
 
