@@ -22,7 +22,7 @@ class ReviewService
     {
         try {
             DB::beginTransaction();
-            $order = Order::find(['student_id' => $request->user()->id, 'order_id' => $request->orderId])->first();
+            $order = Order::where(['student_id' => $request->user()->id, 'id' => $request->orderId])->first();
             if (!$order) {
                 throw new Exception('Order is not valid');
             }
