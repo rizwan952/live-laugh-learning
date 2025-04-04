@@ -39,6 +39,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
     Route::get('resources', [DashboardController::class, 'getResources']);
     Route::get('dashboard', [DashboardController::class, 'dashboard']);
 
+    Route::get('course', [AdminCourseController::class, 'getCourses']);
     Route::post('course', [AdminCourseController::class, 'createCourse']);
     Route::put('course/update/{course}', [AdminCourseController::class, 'updateCourse']);
 
