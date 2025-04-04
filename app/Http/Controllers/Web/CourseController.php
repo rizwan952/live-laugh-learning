@@ -17,7 +17,7 @@ class CourseController extends Controller
     public function getCourses()
     {
         try {
-            $courses = Course::all();
+            $courses = Course::where('status', true)->get();
             $data = CourseResource::collection($courses);
             return $this->apiResponse(true, 'Data fetched successfully', $data);
         } catch (Exception $e) {
