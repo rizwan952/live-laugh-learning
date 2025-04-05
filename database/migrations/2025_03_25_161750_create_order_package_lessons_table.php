@@ -15,10 +15,20 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained('orders');
             $table->foreignId('order_package_id')->constrained('order_packages');
-            $table->string('status')->default('pending');
+            $table->string('status')->default('pending')->index();
+            $table->decimal('amount',8,2);
+            # pending, processing, completed, cancelled, refund_initiated, refund_approved,
+            # refund_processing, refunded, refund_cancelled, refund_failed
             $table->timestamp('start_at')->nullable();
             $table->timestamp('end_at')->nullable();
             $table->string('time_zone')->nullable();
+            // Refund fields
+            $table->string('refund_method')->nullable(); // e.g., 'stripe', 'paypal'
+            $table->string('refund_id')->nullable(); // Stripe refund ID or similar
+            $table->json('refund_details')->nullable(); // Additional refund metadata
+            $table->text('refund_reason')->nullable(); // reason for refund
+            $table->timestamp('refund_initiated_at')->nullable(); // Optional: when refund completed
+            $table->timestamp('refunded_at')->nullable(); // Optional: when refund completed
             $table->timestamps();
         });
     }

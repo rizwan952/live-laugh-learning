@@ -19,11 +19,12 @@ return new class extends Migration
             $table->decimal('course_price',8,2);
             $table->decimal('tax_percent',8,2)->nullable();
             $table->decimal('total_tax',8,2)->nullable();
+            $table->decimal('refund_amount',8,2)->nullable();
             $table->decimal('final_amount',8,2);
-            $table->enum('status',['pending','in_progress','completed','cancelled'])->default('pending');
+            $table->enum('status',['pending','in_progress','completed','cancelled'])->default('pending')->index();
             $table->string('payment_method')->nullable();
             $table->string('payment_id')->nullable();
-            $table->enum('payment_status',['pending','processing','completed','failed'])->default('pending');
+            $table->enum('payment_status',['pending','processing','completed','failed', 'partially_refunded', 'refunded'])->default('pending')->index();
             $table->json('payment_details')->nullable();
             $table->timestamps();
         });

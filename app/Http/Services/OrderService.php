@@ -56,11 +56,13 @@ class OrderService
             ]);
 
             // Prepare data for bulk insert
+            $eachLessonPrice = $package->price / $package->lesson_count;
             $lessonData = [];
             for ($i = 0; $i < $package->lesson_count; $i++) {
                 $lessonData[] = [
                     'order_id' => $order->id,
                     'order_package_id' => $orderPackage->id,
+                    'amount' => $eachLessonPrice,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -101,7 +103,7 @@ class OrderService
             DB::beginTransaction();
 
             // Get the packageLessons data from the request
-              $packageLessons = $request->packageLessons;
+            $packageLessons = $request->packageLessons;
             // Update each lesson
             foreach ($packageLessons as $lessonData) {
                 $lesson = OrderPackageLesson::where('id', $lessonData['id'])
@@ -128,6 +130,26 @@ class OrderService
         }
     }
 
+    public function initiateRefund(Request $request, OrderPackageLesson $orderPackageLesson)
+    {
+        try {
+            DB::beginTransaction();
+
+            if ($orderPackageLesson->order->student->id != auth()->id()) {
+                throw new Exception("OrderLesson with ID {$orderPackageLesson->id} not found or does not belong to this student");
+            }
+            $orderPackageLesson->update([
+                'status' => 'refund_initiated',
+                'reason' => $request->reason
+            ]);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function handleWebhook(Request $request)
     {
         Log::info('Inside handleWebhook');
@@ -146,17 +168,77 @@ class OrderService
             return response()->json(['error' => 'Invalid signature'], 400);
         }
 
-        $paymentIntent = $event->data->object;
-        $paymentStatus = 'processing';
+        // Handle the event based on its type using if-else
         if ($event->type === 'payment_intent.succeeded') {
+            $paymentIntent = $event->data->object;
             $paymentStatus = 'completed';
-        } elseif ($event->type === 'payment_intent.payment_failed' || $event->type === 'payment_intent.canceled') {
+            Order::where('payment_id', $paymentIntent->id)->update([
+                'payment_status' => $paymentStatus,
+                'payment_details' => json_encode($paymentIntent)
+            ]);
+            Log::info('Payment succeeded for ' . $paymentIntent->id);
+        } else if ($event->type === 'payment_intent.payment_failed' || $event->type === 'payment_intent.canceled') {
+            $paymentIntent = $event->data->object;
             $paymentStatus = 'failed';
+            Order::where('payment_id', $paymentIntent->id)->update([
+                'payment_status' => $paymentStatus,
+                'payment_details' => json_encode($paymentIntent)
+            ]);
+            Log::info('Payment failed/canceled for ' . $paymentIntent->id);
+
+        } else if ($event->type === 'refund.updated') {
+            $refund = $event->data->object;
+            $lesson = OrderPackageLesson::where('refund_id', $refund->id)->first();
+
+            if ($lesson) {
+                $refundedAt = null;
+                if ($refund->status === 'succeeded') {
+                    $status = 'refunded';
+                    $refundedAt = now();
+                } else if ($refund->status === 'failed') {
+                    $status = 'refund_failed';
+                } else if ($refund->status === 'pending') {
+                    $status = 'refund_processing';
+                } else {
+                    $status = $lesson->status;
+                }
+
+                $lesson->update([
+                    'status' => $status,
+                    'refunded_at' => $refundedAt,
+                    'refund_details' => json_encode([
+                        'stripe_status' => $refund->status,
+                        'amount' => $refund->amount / 100,
+                        'reason' => $refund->reason,
+                        'failure_reason' => $refund->failure_reason ?? null,
+                        'updated_at' => now()->toDateTimeString()
+                    ])
+                ]);
+                // Update the order lesson in case of refund succeeded
+                if($refund->status === 'succeeded'){
+                    // Check if the all lessons of this course are refunded
+                    $lessons = OrderPackageLesson::where('order_id', $lesson->order_id)->get();
+                    // Count refund statuses
+                    $totalLessons = $lessons->count();
+                    $refundedLessons = $lessons->where('status', 'refunded')->count();
+                    $newStatus = 'partially_refunded';
+                    if ($refundedLessons === $totalLessons) {
+                        // All lessons are refunded
+                        $newStatus = 'refunded';
+                    }
+                    $lesson->order->update([
+                        'status' => $newStatus,
+                        'refund_amount' => $lesson->amount,
+                        'final_amount' =>  $lesson->order->final_amount - $refund->amount,
+                    ]);
+
+                }
+
+                Log::info('Refund updated for lesson ' . $lesson->id . ' with refund ID ' . $refund->id);
+            }
+        } else {
+            Log::info('Unhandled event type: ' . $event->type);
         }
-        // Update payment status in database
-        Order::where('payment_id', $paymentIntent->id)->update(['payment_status' => $paymentStatus, 'payment_details' => json_encode($paymentIntent)]);
-        Log::info('Webhook Handled  payment event for ' . $paymentIntent->id);
-        Log::info('Webhook Handled Event Type ' . $event->type);
         return response()->json(['message' => 'Webhook received'], 200);
     }
 }

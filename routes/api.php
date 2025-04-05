@@ -58,6 +58,9 @@ Route::prefix('student')->middleware(['auth:sanctum', 'role:student'])->group(fu
     Route::get('orders', [OrderController::class, 'getOrders']);
     Route::post('order', [OrderController::class, 'order']);
     Route::put('order/{order}/package-lessons', [OrderController::class, 'updateOrderLessons']);
+    //    Refund route
+    Route::put('lesson-refund/{orderPackageLesson}', [OrderController::class, 'initiateRefund']);
+
     Route::apiResource('reviews', ReviewController::class);
 });
 

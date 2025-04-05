@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderLessonRequest;
 use App\Http\Requests\OrderRequest;
+use App\Http\Requests\RefundRequest;
 use App\Http\Services\OrderService;
 use App\Models\Order;
+use App\Models\OrderPackageLesson;
 use App\Traits\ApiResponseHelper;
 use Exception;
 use Illuminate\Http\Request;
@@ -55,6 +57,20 @@ class OrderController extends Controller
         try {
             $this->orderService->updateOrderLessons($request, $order);
             return $this->apiResponse(true, 'Order updated successfully');
+        } catch (Exception $e) {
+            $statusCode = 400;
+            if ($e->getCode() > 0 && $e->getCode() < 600) {
+                $statusCode = $e->getCode();
+            }
+            return $this->apiResponse(false, $e->getMessage(), [], $statusCode);
+        }
+    }
+
+    public function initiateRefund(RefundRequest $request, OrderPackageLesson $orderPackageLesson)
+    {
+        try {
+            $this->orderService->initiateRefund($request, $orderPackageLesson);
+            return $this->apiResponse(true, 'Refund initiated successfully');
         } catch (Exception $e) {
             $statusCode = 400;
             if ($e->getCode() > 0 && $e->getCode() < 600) {
