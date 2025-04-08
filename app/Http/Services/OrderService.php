@@ -232,8 +232,8 @@ class OrderService
                     $lesson->order->update([
                         'payment_status' => $newStatus,
                         'refund_amount' => $lesson->amount,
-                        'final_amount' =>  $lesson->order->final_amount - $refund->amount,
                     ]);
+                    $lesson->order->decrement('final_amount', $refund->amount);
 
                 }
 
