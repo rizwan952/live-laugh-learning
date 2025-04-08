@@ -230,7 +230,7 @@ class OrderService
                         $newStatus = 'refunded';
                     }
                     $lesson->order->update([
-                        'status' => $newStatus,
+                        'payment_status' => $newStatus,
                         'refund_amount' => $lesson->amount,
                         'final_amount' =>  $lesson->order->final_amount - $refund->amount,
                     ]);
