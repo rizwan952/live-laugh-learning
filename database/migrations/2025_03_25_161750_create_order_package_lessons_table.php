@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('order_package_id')->constrained('order_packages');
             $table->string('status')->default('pending')->index();
             $table->decimal('amount',8,2);
-            # pending, processing, completed, cancelled, refund_initiated, refund_approved,
+            # pending, processing, completed, cancelled, refund_initiated,
             # refund_processing, refunded, refund_cancelled, refund_failed
             $table->timestamp('start_at')->nullable();
             $table->timestamp('end_at')->nullable();

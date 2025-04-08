@@ -38,7 +38,7 @@ class OrderService
         $orderPackageLesson->update([
             'status' => $request->status
         ]);
-        if ($request->status == 'refund_processing'){
+        if ($request->status == 'refund_approved'){
 //            Start refund processing
             $this-> lessonRefund($orderPackageLesson);
         }
@@ -48,9 +48,9 @@ class OrderService
     {
         $amountInCents = (int)($orderPackageLesson->amount * 100);
         $refund = Refund::create([
-            'charge' => $orderPackageLesson->order->payment_id,
+            'charge' => $orderPackageLesson->order->charge_id,
             'amount' => $amountInCents,
-            'reason' => $request->refund_reason ?? 'requested_by_customer',
+            'reason' => $request->reason ?? 'requested_by_customer',
             'metadata' => [
                 'lesson_id' => $orderPackageLesson->id,
                 'order_id' => $orderPackageLesson->order->id
@@ -62,6 +62,7 @@ class OrderService
             'refund_method' => 'stripe',
             'refund_id' => $refund->id,
             'refund_initiated_at' => now(),
+            'status'=>'refund_processing',
             'refund_details' => json_encode($refund)
         ]);
     }

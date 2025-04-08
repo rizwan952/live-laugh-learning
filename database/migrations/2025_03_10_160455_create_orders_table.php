@@ -24,6 +24,7 @@ return new class extends Migration
             $table->enum('status',['pending','in_progress','completed','cancelled'])->default('pending')->index();
             $table->string('payment_method')->nullable();
             $table->string('payment_id')->nullable();
+            $table->string('charge_id')->nullable();
             $table->enum('payment_status',['pending','processing','completed','failed', 'partially_refunded', 'refunded'])->default('pending')->index();
             $table->json('payment_details')->nullable();
             $table->timestamps();

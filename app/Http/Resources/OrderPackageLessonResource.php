@@ -20,6 +20,11 @@ class OrderPackageLessonResource extends JsonResource
             'startAt' => $this->start_at,
             'endAt' => $this->end_at,
             'timeZone' => $this->time_zone,
+            'refundMethod' => $this->refund_method,
+            'refundId' => $this->refund_id,
+            'refundReason' => $this->refund_reason,
+            'refundInitiatedAt' => $this->refund_initiated_at,
+            'refundedAt' => $this->refunded_at,
             'createdAt' => $this->created_at ? $this->created_at->toDateTimeString() : null,
         ];
     }

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('conversation_id')->constrained('conversations')->index(); // Links to conversation
-            $table->foreignId('sender_id')->constrained('users')->index(); // Who sent the message
+            $table->foreignId('conversation_id')->constrained('conversations')->index('conversation_id'); // Links to conversation
+            $table->foreignId('sender_id')->constrained('users')->index('sender_id'); // Who sent the message
             $table->text('content'); // Message content
             $table->string('message_type', 50)->default('text'); // Support for future types
             $table->boolean('is_read')->default(false)->index(); // Read status

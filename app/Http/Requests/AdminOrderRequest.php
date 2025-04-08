@@ -27,7 +27,7 @@ class AdminOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => 'required|in:in_progress,processing,completed,cancelled'
+            'status' => 'required|in:in_progress,processing,completed,cancelled,refund_approved,refund_cancelled'
         ];
     }
 

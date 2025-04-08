@@ -140,7 +140,7 @@ class OrderService
             }
             $orderPackageLesson->update([
                 'status' => 'refund_initiated',
-                'reason' => $request->reason
+                'refund_reason' => $request->reason
             ]);
 
             DB::commit();
@@ -172,8 +172,11 @@ class OrderService
         if ($event->type === 'payment_intent.succeeded') {
             $paymentIntent = $event->data->object;
             $paymentStatus = 'completed';
+            // Extract the charge ID
+
             Order::where('payment_id', $paymentIntent->id)->update([
                 'payment_status' => $paymentStatus,
+                'charge_id'=>$paymentIntent->latest_charge ?? null,
                 'payment_details' => json_encode($paymentIntent)
             ]);
             Log::info('Payment succeeded for ' . $paymentIntent->id);
