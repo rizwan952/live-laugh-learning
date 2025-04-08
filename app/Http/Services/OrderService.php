@@ -229,11 +229,12 @@ class OrderService
                         // All lessons are refunded
                         $newStatus = 'refunded';
                     }
-                    $lesson->order->update([
+                    $order = Order::find($lesson->order_id);
+                    $order->increment('refund_amount', $lesson->amount);
+                    $order->decrement('final_amount', $refund->amount);
+                    $order->update([
                         'payment_status' => $newStatus,
-                        'refund_amount' => $lesson->amount,
                     ]);
-                    $lesson->order->decrement('final_amount', $refund->amount);
 
                 }
 
