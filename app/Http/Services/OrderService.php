@@ -231,7 +231,7 @@ class OrderService
                     }
                     $order = Order::find($lesson->order_id);
                     $order->increment('refund_amount', $lesson->amount);
-                    $order->decrement('final_amount', $refund->amount);
+                    $order->decrement('final_amount', $lesson->amount);
                     $order->update([
                         'payment_status' => $newStatus,
                     ]);
