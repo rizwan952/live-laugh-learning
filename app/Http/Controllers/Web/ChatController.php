@@ -8,6 +8,7 @@ use App\Http\Resources\ConversationResource;
 use App\Http\Resources\MessageResource;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
@@ -18,7 +19,7 @@ class ChatController extends Controller
     public function sendMessage(SendMessageRequest $request)
     {
         $senderId = Auth::id();
-        $receiverId = $request->receiver_id;
+        $receiverId = User::where('role','admin')->first()->value('id');
 
         // Find or create conversation
         $conversation = Conversation::where(function ($query) use ($senderId, $receiverId) {
@@ -63,7 +64,6 @@ class ChatController extends Controller
             })->firstOrFail();
 
         $messages = Message::where('conversation_id', $conversation->id)
-            ->orderBy('sent_at', 'asc')
             ->paginate(20);
 
         // Mark messages as read if receiver is current user

@@ -22,9 +22,9 @@ class MessageResource extends JsonResource
             'message_type' => $this->message_type,
             'is_read' => $this->is_read,
             'is_delivered' => $this->is_delivered,
-            'sent_at' => $this->sent_at->toIso8601String(),
-            'delivered_at' => $this->delivered_at?->toIso8601String(),
-            'read_at' => $this->read_at?->toIso8601String(),
+            'sent_at' => $this->sent_at,
+            'delivered_at' => $this->delivered_at,
+            'read_at' => $this->read_at,
         ];
     }
 }

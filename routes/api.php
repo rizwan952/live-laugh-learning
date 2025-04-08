@@ -28,10 +28,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('get-calendar', [AdminCalendarController::class, 'index']);
 
     #Future chat routs
-//    Route::post('chat/send', [ChatController::class, 'sendMessage']);
-//    Route::get('chat/conversation/{conversationId}', [ChatController::class, 'getConversation']);
-//    Route::get('chat/conversations', [ChatController::class, 'getConversations']);
-
+    Route::prefix('chat')->group(function () {
+        Route::post('send', [ChatController::class, 'sendMessage']);
+        Route::get('conversation/{conversationId}', [ChatController::class, 'getConversation']);
+        Route::get('conversations', [ChatController::class, 'getConversations']);
+    });
 });
 
 // Admin routs

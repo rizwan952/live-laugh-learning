@@ -18,8 +18,8 @@ class ConversationResource extends JsonResource
             'id' => $this->id,
             'user1_id' => $this->user1_id,
             'user2_id' => $this->user2_id,
-            'created_at' => $this->created_at->toIso8601String(),
-            'last_message_at' => $this->last_message_at?->toIso8601String(),
+            'created_at' => $this->created_at,
+            'last_message_at' => $this->last_message_at,
             'messages' => MessageResource::collection($this->whenLoaded('messages')),
         ];
     }
