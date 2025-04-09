@@ -14,13 +14,23 @@ class ConversationResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Determine the other user relative to the authenticated user
+        $authUserId = auth()->id();
+        $otherUser = $this->user1_id === $authUserId ? $this->user2 : $this->user1;
         return [
             'id' => $this->id,
-            'user1_id' => $this->user1_id,
-            'user2_id' => $this->user2_id,
-            'created_at' => $this->created_at,
-            'last_message_at' => $this->last_message_at,
-            'messages' => MessageResource::collection($this->whenLoaded('messages')),
+            'otherUser' => $this->whenLoaded('user1', fn() => [
+                'id' => $otherUser->id,
+                'name' => $otherUser->name,
+                'email' => $otherUser->email ?? null, // Optional, adjust fields as needed
+            ]),
+            'lastMessage' =>$this->messages->isNotEmpty() ? new MessageResource($this->messages->sortByDesc('created_at')->first()) : null,
+            'unread_count' => $this->whenLoaded('messages', fn() => $this->messages->where('sender_id', '!=', $authUserId)
+                ->where('is_read', false)
+                ->count()
+            ),
+            'createdAt' => $this->created_at->toDateTimeString(),
+            'lastMessageAt' => $this->last_message_at,
         ];
     }
 }

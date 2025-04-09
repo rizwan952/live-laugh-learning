@@ -23,4 +23,9 @@ class Order extends Model
         return $this->belongsTo(Course::class);
     }
 
+    public function review()
+    {
+        return $this->hasOne(Review::class);
+    }
+
 }

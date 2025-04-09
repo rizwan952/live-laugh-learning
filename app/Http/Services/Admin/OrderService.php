@@ -18,7 +18,7 @@ class OrderService
 
     public function getOrders()
     {
-        $orders = Order::all();
+        $orders = Order::with('package', 'student', 'review')->get();
         return OrderResource::collection($orders);
     }
 

@@ -28,7 +28,7 @@ class OrderService
             $query->where('id', $request->orderId);
         }
 
-        $orders = $query->get();
+        $orders = $query->with('package', 'student', 'review')->get();
         return OrderResource::collection($orders);
     }
 

@@ -22,6 +22,8 @@ return new class extends Migration
             $table->boolean('is_deleted')->default(false); // Message-level soft delete
             $table->timestamp('delivered_at')->nullable(); // When delivered
             $table->timestamp('read_at')->nullable(); // When read
+            // Composite index for fetching unread messages in a conversation
+            $table->index(['conversation_id', 'is_read', 'created_at']);
             $table->softDeletes(); // deleted_at for soft deletes
             $table->timestamps();
         });

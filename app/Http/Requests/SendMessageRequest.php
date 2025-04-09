@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class SendMessageRequest extends FormRequest
 {
@@ -22,7 +23,10 @@ class SendMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'message' => 'required|string',
+
+            'receiverId' => 'required|exists:users,id|not_in:' . Auth::id(),
+            'message' => 'required|string|max:5000', // Limit message length
+            'message_type' => 'nullable|in:text,image,file,video', //
         ];
     }
 }

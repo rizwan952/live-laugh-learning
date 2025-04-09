@@ -30,7 +30,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     #Future chat routs
     Route::prefix('chat')->group(function () {
         Route::post('send', [ChatController::class, 'sendMessage']);
-        Route::get('conversation/{conversationId}', [ChatController::class, 'getConversation']);
+        Route::get('conversation/{conversation}', [ChatController::class, 'getConversation']);
         Route::get('conversations', [ChatController::class, 'getConversations']);
     });
 });
