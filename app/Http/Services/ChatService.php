@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Events\MessageSent;
 use App\Http\Resources\ConversationResource;
 use App\Http\Resources\MessageResource;
 use App\Models\Conversation;
@@ -46,8 +47,8 @@ class ChatService
                 'is_delivered' => false, // Default, can be updated via events
             ]);
 
-            // Optional: Fire an event for real-time notifications (e.g., via Laravel Echo)
-//            event(new \App\Events\MessageSent($message));
+            // Broadcast the message to other users
+            broadcast(new MessageSent($message));
 
             DB::commit();
         } catch (Exception $e) {

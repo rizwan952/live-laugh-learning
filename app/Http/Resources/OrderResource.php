@@ -19,6 +19,7 @@ class OrderResource extends JsonResource
             'courseId' => $this->course_id,
             'courseName' => $this->course_name,
             'coursePrice' => $this->course_price,
+            'refundAmount'=>$this->refund_amount,
             'finalAmount' => $this->final_amount,
             'status' => $this->status,
             'paymentMethod' => $this->payment_method,
