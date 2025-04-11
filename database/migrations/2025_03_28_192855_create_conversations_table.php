@@ -18,7 +18,6 @@ return new class extends Migration
             $table->timestamp('last_message_at')->nullable()->index(); // Timestamp of last message
             // Indexes
             $table->unique(['user1_id', 'user2_id']); // Prevent duplicate conversations
-            $table->checkConstraint('user1_id != user2_id', 'no_self_conversation'); // Prevent self-messaging
             $table->index(['user1_id', 'last_message_at']); // For user-specific conversation lists
             $table->index(['user2_id', 'last_message_at']);
             $table->softDeletes(); // deleted_at for soft deletes

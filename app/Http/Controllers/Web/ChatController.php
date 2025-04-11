@@ -7,7 +7,6 @@ use App\Http\Requests\SendMessageRequest;
 use App\Http\Services\ChatService;
 use App\Models\Conversation;
 use App\Traits\ApiResponseHelper;
-use Illuminate\Http\Request;
 use Exception;
 
 class ChatController extends Controller
@@ -35,10 +34,10 @@ class ChatController extends Controller
         }
     }
 
-    public function getConversation(Request $request, Conversation $conversation)
+    public function getConversation(Conversation $conversation)
     {
         try {
-            $data = $this->chatService->getConversation($request, $conversation);
+            $data = $this->chatService->getConversation($conversation);
             return $this->apiResponse(true, 'Conversation fetched successfully', $data);
         } catch (Exception $e) {
             $statusCode = 400;
@@ -49,10 +48,10 @@ class ChatController extends Controller
         }
     }
 
-    public function getConversations(Request $request)
+    public function getConversations()
     {
         try {
-            $data = $this->chatService->getConversations($request);
+            $data = $this->chatService->getConversations();
             return $this->apiResponse(true, 'Conversations fetched successfully', $data);
         } catch (Exception $e) {
             $statusCode = 400;

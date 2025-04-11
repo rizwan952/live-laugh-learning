@@ -2,7 +2,6 @@
 
 namespace App\Http\Services;
 
-use App\Events\MessageSent;
 use App\Http\Resources\ConversationResource;
 use App\Http\Resources\MessageResource;
 use App\Models\Conversation;
@@ -39,16 +38,13 @@ class ChatService
             }
 
             // Create message
-            $message = Message::create([
+            Message::create([
                 'conversation_id' => $conversation->id,
                 'sender_id' => $senderId,
                 'content' => $request->message,
                 'message_type' => $request->message_type ?? 'text',
                 'is_delivered' => false, // Default, can be updated via events
             ]);
-
-            // Broadcast the message to other users
-            broadcast(new MessageSent($message));
 
             DB::commit();
         } catch (Exception $e) {
@@ -57,7 +53,7 @@ class ChatService
         }
     }
 
-    public function getConversation(Request $request, Conversation $conversation)
+    public function getConversation(Conversation $conversation)
     {
         $conversation = Conversation::where('id', $conversation->id)
             ->where(function ($query) {
@@ -81,11 +77,12 @@ class ChatService
 
     }
 
-    public function getConversations(Request $request)
+    public function getConversations()
     {
         $conversations = Conversation::where('user1_id', Auth::id())
             ->orWhere('user2_id', Auth::id())
             ->orderBy('last_message_at', 'desc')
+            ->with('messages')
             ->get();
 
         return ConversationResource::collection($conversations);
