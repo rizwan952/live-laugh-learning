@@ -100,6 +100,14 @@ class ChatService
             ->orderBy('created_at', 'desc')
             ->get();
 
+        // Mark them as read
+        Message::whereIn('id', $unreadMessages->pluck('id'))
+            ->update([
+                'is_read' => true,
+                'read_at' => now()
+            ]);
+
+
         return MessageResource::collection($unreadMessages);
     }
 
