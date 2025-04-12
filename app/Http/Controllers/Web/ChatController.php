@@ -49,10 +49,24 @@ class ChatController extends Controller
         }
     }
 
+    public function getUnreadMessages(Conversation $conversation)
+    {
+        try {
+            $data = $this->chatService->getUnreadMessages($conversation);
+            return $this->apiResponse(true, 'Conversation fetched successfully', $data);
+        } catch (Exception $e) {
+            $statusCode = 400;
+            if ($e->getCode() > 0 && $e->getCode() < 600) {
+                $statusCode = $e->getCode();
+            }
+            return $this->apiResponse(false, $e->getMessage(), [], $statusCode);
+        }
+    }
+
     public function getConversations(Request $request)
     {
         try {
-            $data = $this->chatService->getConversations($request);
+             $data = $this->chatService->getConversations($request);
             return $this->apiResponse(true, 'Conversations fetched successfully', $data);
         } catch (Exception $e) {
             $statusCode = 400;

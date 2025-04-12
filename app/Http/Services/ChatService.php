@@ -7,6 +7,7 @@ use App\Http\Resources\ConversationResource;
 use App\Http\Resources\MessageResource;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +22,9 @@ class ChatService
 
             $senderId = Auth::id();
             $receiverId = $request->receiverId;
+            if (auth()->user()->role == 'student'){
+                $receiverId = User::where('role', 'admin')->first()->id;
+            }
 
             // Find or create conversation (ensure consistent user1_id < user2_id)
             $conversation = Conversation::where(function ($query) use ($senderId, $receiverId) {
@@ -65,8 +69,10 @@ class ChatService
                     ->orWhere('user2_id', Auth::id());
             })->with('messages')->firstOrFail();
 
+        $perPage = $request->get('per_page', 2); // default 15 messages per page
         $messages = Message::where('conversation_id', $conversation->id)
-            ->get();
+            ->orderBy('created_at', 'desc') // optional: show latest first
+            ->paginate($perPage);
 
         // Mark messages as read if receiver is current user
         Message::where('conversation_id', $conversation->id)
@@ -77,13 +83,35 @@ class ChatService
         return  [
             'conversions' => new ConversationResource($conversation),
             'messages'=> MessageResource::collection($messages),
+            'pagination' => [
+                'current_page' => $messages->currentPage(),
+                'last_page' => $messages->lastPage(),
+                'per_page' => $messages->perPage(),
+                'total' => $messages->total(),
+                'next_page_url' => $messages->nextPageUrl(),
+                'prev_page_url' => $messages->previousPageUrl(),
+            ]
             ];
 
     }
 
+    public function getUnreadMessages(Conversation $conversation)
+    {
+        // Get only unread messages where the current user is the receiver
+        $unreadMessages = Message::where('conversation_id', $conversation->id)
+            ->where('sender_id', '!=', Auth::id())
+            ->where('is_read', false)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return MessageResource::collection($unreadMessages);
+    }
+
+
     public function getConversations(Request $request)
     {
-        $conversations = Conversation::where('user1_id', Auth::id())
+
+         $conversations = Conversation::where('user1_id', Auth::id())
             ->orWhere('user2_id', Auth::id())
             ->orderBy('last_message_at', 'desc')
             ->get();

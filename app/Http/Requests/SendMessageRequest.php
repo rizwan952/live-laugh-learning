@@ -24,7 +24,7 @@ class SendMessageRequest extends FormRequest
     {
         return [
 
-            'receiverId' => 'required|exists:users,id|not_in:' . Auth::id(),
+            'receiverId' => 'nullable|exists:users,id|not_in:' . Auth::id(),
             'message' => 'required|string|max:5000', // Limit message length
             'message_type' => 'nullable|in:text,image,file,video', //
         ];

@@ -14,15 +14,21 @@ class ConversationResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // Determine the other user relative to the authenticated user
         $authUserId = auth()->id();
-        $otherUser = $this->user1_id === $authUserId ? $this->user2 : $this->user1;
+
+        // Determine the other user and which relation is loaded
+        $isUser1 = $this->user1_id === $authUserId;
+        $otherUser = $isUser1 ? $this->user2 : $this->user1;
+        $relation = $isUser1 ? 'user2' : 'user1';
+
         return [
             'id' => $this->id,
-            'otherUser' => $this->whenLoaded('user1', fn() => [
+            'user1'=>$this->user1_id,
+            'user2'=>$this->user2_id,
+            'otherUser' => $this->whenLoaded($relation, fn() => [
                 'id' => $otherUser->id,
                 'name' => $otherUser->name,
-                'email' => $otherUser->email ?? null, // Optional, adjust fields as needed
+                'image' => $otherUser->image ? asset('storage/' . $otherUser->image) : null,
             ]),
             'lastMessage' =>$this->messages->isNotEmpty() ? new MessageResource($this->messages->sortByDesc('created_at')->first()) : null,
             'unread_count' => $this->whenLoaded('messages', fn() => $this->messages->where('sender_id', '!=', $authUserId)
