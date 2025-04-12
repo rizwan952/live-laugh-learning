@@ -57,7 +57,7 @@ class ChatService
         }
     }
 
-    public function getConversation(Conversation $conversation)
+    public function getConversation(Request $request, Conversation $conversation)
     {
         $conversation = Conversation::where('id', $conversation->id)
             ->where(function ($query) {
@@ -65,7 +65,7 @@ class ChatService
                     ->orWhere('user2_id', Auth::id());
             })->with('messages')->firstOrFail();
 
-        $perPage = $request->get('per_page', 2); // default 15 messages per page
+        $perPage = $request->get('per_page', 15); // default 15 messages per page
         $messages = Message::where('conversation_id', $conversation->id)
             ->orderBy('created_at', 'desc') // optional: show latest first
             ->paginate($perPage);
@@ -104,10 +104,8 @@ class ChatService
     }
 
 
-    public function getConversations(Request $request)
     public function getConversations()
     {
-
          $conversations = Conversation::where('user1_id', Auth::id())
             ->orWhere('user2_id', Auth::id())
             ->orderBy('last_message_at', 'desc')

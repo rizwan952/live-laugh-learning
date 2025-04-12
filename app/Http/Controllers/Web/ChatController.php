@@ -8,6 +8,7 @@ use App\Http\Services\ChatService;
 use App\Models\Conversation;
 use App\Traits\ApiResponseHelper;
 use Exception;
+use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
@@ -34,10 +35,10 @@ class ChatController extends Controller
         }
     }
 
-    public function getConversation(Conversation $conversation)
+    public function getConversation(Request $request, Conversation $conversation)
     {
         try {
-            $data = $this->chatService->getConversation($conversation);
+            $data = $this->chatService->getConversation($request, $conversation);
             return $this->apiResponse(true, 'Conversation fetched successfully', $data);
         } catch (Exception $e) {
             $statusCode = 400;
