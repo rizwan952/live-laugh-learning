@@ -13,11 +13,12 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
+    'refund_percentage' => env('REFUND_PERCENTAGE','80'),
 
     'stripe' => [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
-        'webhook_secret'=>env('STRIPE_WEBHOOK_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
     ],
 
     'postmark' => [

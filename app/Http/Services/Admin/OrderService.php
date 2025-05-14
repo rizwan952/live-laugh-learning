@@ -30,9 +30,6 @@ class OrderService
 
     }
 
-
-
-
     public function updateOrderPackageLesson(Request $request, OrderPackageLesson $orderPackageLesson)
     {
         $orderPackageLesson->update([
@@ -46,7 +43,7 @@ class OrderService
 
     public function lessonRefund(OrderPackageLesson $orderPackageLesson)
     {
-        $amountInCents = (int)($orderPackageLesson->amount * 100);
+        $amountInCents = (int)($orderPackageLesson->refundable_amount * 100);
         $refund = Refund::create([
             'charge' => $orderPackageLesson->order->charge_id,
             'amount' => $amountInCents,

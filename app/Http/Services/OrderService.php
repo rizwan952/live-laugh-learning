@@ -57,12 +57,15 @@ class OrderService
 
             // Prepare data for bulk insert
             $eachLessonPrice = $package->price / $package->lesson_count;
+            $refundPercentage = config('services.refund_percentage');
             $lessonData = [];
             for ($i = 0; $i < $package->lesson_count; $i++) {
                 $lessonData[] = [
                     'order_id' => $order->id,
                     'order_package_id' => $orderPackage->id,
                     'amount' => $eachLessonPrice,
+                    'refundable_amount_percentage' => $refundPercentage,
+                    'refundable_amount' => ($refundPercentage/100) * $eachLessonPrice,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];

@@ -17,9 +17,12 @@ class OrderPackageLessonResource extends JsonResource
         return [
             'id' => $this->id,
             'status' => $this->status,
+            'amount' => $this->amount,
             'startAt' => $this->start_at,
             'endAt' => $this->end_at,
             'timeZone' => $this->time_zone,
+            'refundableAmountPercentage' => $this->refundable_amount_percentage,
+            'refundableAmount' => $this->refundable_amount,
             'refundMethod' => $this->refund_method,
             'refundId' => $this->refund_id,
             'refundReason' => $this->refund_reason,

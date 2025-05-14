@@ -23,6 +23,8 @@ return new class extends Migration
             $table->timestamp('end_at')->nullable();
             $table->string('time_zone')->nullable();
             // Refund fields
+            $table->decimal('refundable_amount_percentage',8,2)->nullable();
+            $table->decimal('refundable_amount',8,2)->nullable();
             $table->string('refund_method')->nullable(); // e.g., 'stripe', 'paypal'
             $table->string('refund_id')->nullable(); // Stripe refund ID or similar
             $table->json('refund_details')->nullable(); // Additional refund metadata
