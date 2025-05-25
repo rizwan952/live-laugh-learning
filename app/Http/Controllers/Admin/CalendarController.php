@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminCalendarRequest;
+use App\Http\Requests\AdminCalendarUpdateRequest;
 use App\Http\Services\Admin\CalendarService;
 use App\Models\Calendar;
 use App\Models\TimeSlot;
@@ -49,7 +50,7 @@ class CalendarController extends Controller
         }
     }
 
-    public function updateTimeSlot(Request $request, TimeSlot $timeSlot)
+    public function updateTimeSlot(AdminCalendarUpdateRequest $request, TimeSlot $timeSlot)
     {
         try {
             $this->calendarService->updateTimeSlot($request, $timeSlot);
