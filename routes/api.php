@@ -52,6 +52,8 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
     Route::apiResource('reviews', AdminReviewController::class);
     Route::apiResource('student', AdminStudentController::class);
 
+    Route::put('timeslot/{timeSlot}', [AdminCalendarController::class, 'updateTimeSlot']);
+    Route::delete('timeslot/{timeSlot}', [AdminCalendarController::class, 'deleteTimeSlot']);
 });
 
 

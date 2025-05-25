@@ -6,6 +6,7 @@ namespace App\Http\Services\Admin;
 use App\Http\Resources\Admin\AdminCalendarResource;
 use App\Models\Calendar;
 use App\Models\OrderPackageLesson;
+use App\Models\TimeSlot;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,12 +25,10 @@ class CalendarService
                 $request->input('startDate'),
                 $request->input('endDate')
             ]);
-        }
-        // Apply only start_date filter if end_date is not provided
+        } // Apply only start_date filter if end_date is not provided
         elseif ($request->has('startDate')) {
             $query->where('date', '>=', $request->input('startDate'));
-        }
-        // Apply only end_date filter if start_date is not provided
+        } // Apply only end_date filter if start_date is not provided
         elseif ($request->has('endDate')) {
             $query->where('date', '<=', $request->input('endDate'));
         }
@@ -52,13 +51,14 @@ class CalendarService
             // Convert $calendar->date to a string in 'Y-m-d' format
             $dateKey = $calendar->date instanceof \Carbon\Carbon
                 ? $calendar->date->toDateString()
-                : (string) $calendar->date;
+                : (string)$calendar->date;
             $calendar->bookedSlots = $slotsByDate->get($dateKey, collect())->values();
             return $calendar;
         });
 
         return AdminCalendarResource::collection($calendarData);
     }
+
     public function createCalendar(Request $request)
     {
         try {
@@ -76,6 +76,35 @@ class CalendarService
                     'end_at' => $slot['endAt'],
                 ]);
             }
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage(), $e->getCode());
+        }
+
+    }
+
+    public function updateTimeSlot(Request $request, TimeSlot $timeSlot)
+    {
+        try {
+            DB::beginTransaction();
+            $timeSlot->update([
+                'start_at' => $request->startAt,
+                'end_at' => $request->endAt,
+            ]);
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage(), $e->getCode());
+        }
+
+    }
+
+    public function deleteTimeSlot(TimeSlot $timeSlot)
+    {
+        try {
+            DB::beginTransaction();
+            $timeSlot->delete();
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
