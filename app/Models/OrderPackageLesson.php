@@ -12,4 +12,9 @@ class OrderPackageLesson extends Model
     {
         return $this->belongsTo(Order::class);
     }
+
+    public function orderPackage()
+    {
+        return $this->belongsTo(OrderPackage::class);
+    }
 }

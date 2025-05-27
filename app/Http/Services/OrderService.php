@@ -18,6 +18,12 @@ use Stripe\Webhook;
 
 class OrderService
 {
+    protected $zoomService;
+
+    public function __construct(ZoomService $zoomService)
+    {
+        $this->zoomService = $zoomService;
+    }
 
     public function getOrders(Request $request)
     {
@@ -60,6 +66,8 @@ class OrderService
             $refundPercentage = config('services.refund_percentage');
             $lessonData = [];
             for ($i = 0; $i < $package->lesson_count; $i++) {
+
+
                 $lessonData[] = [
                     'order_id' => $order->id,
                     'order_package_id' => $orderPackage->id,
@@ -117,11 +125,22 @@ class OrderService
                     throw new Exception("Lesson with ID {$lessonData['id']} not found or does not belong to this order");
                 }
 
+                // Create Zoom meeting
+                $meeting = $this->zoomService->createMeeting(
+                    $lessonData['startAt'],
+                    $lesson->orderPackage->duration,
+                    $order->course_name,
+                    $lessonData['timeZone']
+                );
+
                 // Update the lesson with only the provided fields
                 $lesson->update([
                     'start_at' => $lessonData['startAt'],
                     'end_at' => $lessonData['endAt'],
                     'time_zone' => $lessonData['timeZone'],
+                    'zoom_meeting_id' => $meeting['id'],
+                    'zoom_start_url' => $meeting['start_url'],
+                    'zoom_join_url' => $meeting['join_url'],
                     'status' => 'processing'
                 ]);
             }

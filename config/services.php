@@ -15,6 +15,13 @@ return [
     */
     'refund_percentage' => env('REFUND_PERCENTAGE','80'),
 
+    'zoom' => [
+        'account_id' => env('ZOOM_ACCOUNT_ID', 'nAzPK_BEQXyDPe8RwCJ-YA'),
+        'client_id' => env('ZOOM_CLIENT_ID', '6PARV5NbS8KL7sGjMfO7vA'),
+        'client_secret' => env('ZOOM_CLIENT_SECRET', 'HLm4tRAdXVzdXYlqH8M67OI1YDhbzZB2'),
+        'api_base_url' => env('ZOOM_API_BASE_URL', 'https://api.zoom.us/v2'),
+    ],
+
     'stripe' => [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
